@@ -1,20 +1,26 @@
+bash
+
+cat > /mnt/user-data/outputs/mgmt-science-portfolio/project1.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Project 1 — Pinocchio Problem | Portfolio</title>
+<title>Project 1 — Star Wars & Management Science | Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0f0e0c;
-    --surface: #1a1916;
+    --bg: #0c0d10;
+    --surface: #13151a;
     --accent: #c8a96e;
     --accent2: #7eb8a0;
+    --star: #e8e4dc;
     --text: #e8e4dc;
     --muted: #7a776f;
-    --border: #2e2c28;
+    --border: #252830;
+    --blue: #4a90c4;
+    --red: #c44a4a;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -25,23 +31,36 @@
     line-height: 1.7;
     overflow-x: hidden;
   }
+
+  /* Star field */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(232,228,220,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 40%, rgba(232,228,220,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 10%, rgba(232,228,220,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 30%, rgba(232,228,220,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 85% 60%, rgba(232,228,220,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 75%, rgba(232,228,220,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 85%, rgba(232,228,220,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 15% 90%, rgba(232,228,220,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 55%, rgba(232,228,220,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 33% 22%, rgba(232,228,220,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 78% 12%, rgba(232,228,220,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 5% 50%, rgba(232,228,220,0.4) 0%, transparent 100%),
+      radial-gradient(2px 2px at 48% 88%, rgba(232,228,220,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 92% 45%, rgba(232,228,220,0.5) 0%, transparent 100%);
     pointer-events: none;
     z-index: 0;
   }
+
   nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
     padding: 1.2rem 3rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: rgba(15,14,12,0.9);
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(12,13,16,0.92);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
   }
@@ -50,215 +69,137 @@
   nav .project-id { font-family: 'Playfair Display', serif; font-style: italic; color: var(--accent); font-size: 0.9rem; }
 
   .page-wrap {
-    position: relative;
-    z-index: 1;
-    max-width: 860px;
-    margin: 0 auto;
+    position: relative; z-index: 1;
+    max-width: 860px; margin: 0 auto;
     padding: 8rem 3rem 5rem;
   }
 
   .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.78rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-decoration: none;
-    margin-bottom: 3rem;
-    transition: color 0.2s;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); text-decoration: none; margin-bottom: 3rem; transition: color 0.2s;
   }
   .back-link:hover { color: var(--accent); }
 
   .project-eyebrow {
-    font-size: 0.72rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 0.8rem;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
+    font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 0.8rem;
+    display: flex; align-items: center; gap: 0.8rem;
   }
   .project-eyebrow::before { content: ''; display: block; width: 1.5rem; height: 1px; background: var(--accent); }
 
   h1 {
     font-family: 'Playfair Display', serif;
     font-size: clamp(2.2rem, 5vw, 3.6rem);
-    line-height: 1.1;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.01em;
+    line-height: 1.1; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.01em;
   }
   h1 em { font-style: italic; color: var(--accent); }
+  .subtitle { font-size: 0.9rem; color: var(--muted); margin-bottom: 3.5rem; }
 
-  .subtitle {
-    font-size: 0.9rem;
-    color: var(--muted);
-    margin-bottom: 3.5rem;
-    letter-spacing: 0.02em;
-  }
-
-  .section {
-    margin-bottom: 4rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
-  }
-  .section-num {
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 1.2rem;
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-  }
-  h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.6rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-  }
+  .section { margin-bottom: 4rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+  .section-num { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.2rem; }
+  h2 { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; margin-bottom: 1rem; }
   h2 em { font-style: italic; color: var(--accent); }
   p { color: #a09c93; margin-bottom: 1rem; font-size: 0.95rem; }
   strong { color: var(--text); font-weight: 500; }
 
-  /* LP Table */
-  .lp-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 1.5rem 0;
-    font-size: 0.88rem;
-  }
-  .lp-table th {
-    background: var(--surface);
-    color: var(--accent);
-    font-weight: 500;
-    padding: 0.7rem 1rem;
-    text-align: left;
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    border: 1px solid var(--border);
-  }
-  .lp-table td {
-    padding: 0.65rem 1rem;
-    border: 1px solid var(--border);
-    color: #a09c93;
-  }
-  .lp-table tr:hover td { background: var(--surface); }
-  .lp-table .highlight { color: var(--accent2); font-weight: 500; }
-
-  /* Formula box */
-  .formula-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    padding: 1.2rem 1.5rem;
-    margin: 1.5rem 0;
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 1.1rem;
-    color: var(--text);
-  }
-  .formula-box .label {
-    font-family: 'DM Sans', sans-serif;
-    font-style: normal;
-    font-size: 0.68rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted);
-    display: block;
-    margin-bottom: 0.4rem;
-  }
-
-  /* Corner points */
-  .corner-grid {
+  /* Concept cards — the main layout */
+  .concept-strip {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 0.8rem;
-    margin: 1.5rem 0;
-  }
-  .corner-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 0.9rem;
-    text-align: center;
-    transition: border-color 0.2s;
-  }
-  .corner-card.optimal { border-color: var(--accent2); }
-  .corner-card .point-label { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.3rem; }
-  .corner-card .point-coords { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--text); }
-  .corner-card .point-z { font-size: 0.8rem; color: var(--accent2); margin-top: 0.3rem; }
-  .corner-card.optimal .point-label { color: var(--accent2); }
-
-  /* Interactive LP visualizer */
-  .demo-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    padding: 1.5rem;
-    margin: 1.5rem 0;
-  }
-  .demo-box h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1rem;
-    margin-bottom: 1rem;
-    color: var(--text);
-  }
-  canvas { display: block; width: 100%; max-width: 480px; }
-  .slider-row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin: 0.6rem 0;
-    font-size: 0.82rem;
-    color: var(--muted);
-  }
-  .slider-row label { min-width: 80px; }
-  .slider-row input[type=range] { flex: 1; accent-color: var(--accent); }
-  .slider-row .val { min-width: 60px; color: var(--accent); font-size: 0.85rem; }
-
-  /* Evidence photo */
-  .evidence-note {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 1.2rem 1.5rem;
-    font-size: 0.82rem;
-    color: var(--muted);
-    font-style: italic;
-    margin-top: 1rem;
-  }
-
-  /* Learn cards */
-  .learn-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1px;
     background: var(--border);
-    margin-top: 1.5rem;
+    margin: 1.5rem 0;
   }
-  .learn-card {
+  .concept-row {
     background: var(--bg);
-    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: 2.2rem 1fr 1fr;
+    gap: 0;
   }
-  .learn-card .learn-label {
-    font-size: 0.68rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 0.6rem;
+  .concept-row .num {
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: 1.1rem; color: var(--border);
+    padding: 0.5rem;
+    border-right: 1px solid var(--border);
   }
+  .concept-row:hover .num { color: var(--accent); }
+  .concept-cell {
+    padding: 1.1rem 1.3rem;
+    font-size: 0.88rem;
+    border-right: 1px solid var(--border);
+  }
+  .concept-cell:last-child { border-right: none; }
+  .concept-cell .cell-label {
+    font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 0.4rem;
+  }
+  .concept-cell .cell-title { color: var(--text); font-weight: 500; margin-bottom: 0.25rem; font-size: 0.92rem; }
+  .concept-cell .cell-body { color: #7a776f; line-height: 1.55; font-size: 0.84rem; }
+  .concept-row:hover { background: var(--surface); }
+
+  /* Force side badge */
+  .side-rebel { border-left: 3px solid var(--blue); }
+  .side-empire { border-left: 3px solid var(--red); }
+
+  /* Interactive scene explorer */
+  .demo-box {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 1.5rem; margin: 1.5rem 0;
+  }
+  .demo-box h3 { font-family: 'Playfair Display', serif; font-size: 1rem; margin-bottom: 0.8rem; color: var(--text); }
+
+  .scene-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.2rem; }
+  .scene-btn {
+    background: var(--bg); border: 1px solid var(--border); color: var(--muted);
+    padding: 0.38rem 0.85rem; font-size: 0.75rem; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; letter-spacing: 0.06em; transition: all 0.2s;
+  }
+  .scene-btn:hover, .scene-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+  .scene-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .scene-content.visible { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+  .scene-card {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+    background: var(--border);
+  }
+  .scene-half { background: var(--bg); padding: 1.1rem 1.3rem; }
+  .scene-half .sh-label { font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+  .scene-half .sh-body { font-size: 0.86rem; color: #a09c93; line-height: 1.6; }
+  .scene-half .sh-concept { display: inline-block; margin-top: 0.6rem; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.6rem; border: 1px solid var(--accent); color: var(--accent); }
+
+  /* Quote pull */
+  .pull-quote {
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 0;
+    background: var(--surface);
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--text);
+  }
+  .pull-quote .pq-attr { font-family: 'DM Sans', sans-serif; font-style: normal; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 0.6rem; display: block; }
+
+  /* Evidence note */
+  .evidence-note {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 1.1rem 1.4rem; font-size: 0.82rem; color: var(--muted);
+    font-style: italic; margin-top: 1rem;
+  }
+
+  .learn-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 1px; background: var(--border); margin-top: 1.5rem; }
+  .learn-card { background: var(--bg); padding: 1.5rem; }
+  .learn-card .learn-label { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.6rem; }
   .learn-card p { font-size: 0.88rem; }
 
-  footer {
-    position: relative; z-index: 1;
-    border-top: 1px solid var(--border);
-    padding: 2rem 3rem;
-    display: flex; align-items: center; justify-content: space-between;
-  }
+  footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 2rem 3rem; display: flex; align-items: center; justify-content: space-between; }
   footer p { font-size: 0.78rem; color: var(--muted); margin: 0; }
   footer a { color: var(--accent); text-decoration: none; font-size: 0.78rem; }
 
@@ -266,6 +207,9 @@
     nav { padding: 1rem 1.2rem; }
     .page-wrap { padding: 7rem 1.2rem 3rem; }
     footer { flex-direction: column; gap: 1rem; padding: 1.5rem 1.2rem; }
+    .concept-row { grid-template-columns: 1fr; }
+    .concept-row .num { display: none; }
+    .scene-card { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -273,135 +217,245 @@
 
 <nav>
   <a href="index.html">← Portfolio</a>
-  <span class="project-id">Project 01 — Linear Programming</span>
+  <span class="project-id">Project 01 — Film Analysis</span>
 </nav>
 
 <div class="page-wrap">
   <a class="back-link" href="index.html">← Back to Portfolio</a>
 
-  <div class="project-eyebrow">Project 01 / Linear Programming</div>
-  <h1>Pinocchio <em>Problem</em></h1>
-  <p class="subtitle">Graphical optimisation of a toy manufacturing decision under resource constraints</p>
+  <div class="project-eyebrow">Project 01 / Reading & Film Analysis</div>
+  <h1>Star Wars: <em>A New Hope</em></h1>
+  <p class="subtitle">How a galaxy far, far away illustrates the core concepts of management science</p>
 
-  <!-- Section 1: Overview -->
+  <!-- Section 1 -->
   <div class="section">
     <div class="section-num">01 — Overview</div>
-    <h2>Maximising Profit Through <em>Linear Programming</em></h2>
+    <h2>Why We Watched <em>Star Wars</em></h2>
     <p>
-      The Pinocchio Problem is a classic linear programming (LP) exercise where a toy company must decide 
-      how many <strong>trucks</strong> and <strong>trains</strong> to produce each month to maximise profit, 
-      subject to constraints on carpentry labour, finishing labour, and available truck demand.
+      In class we were asked to watch <strong>Star Wars: A New Hope (1977)</strong> through the lens of 
+      management science — not as a sci-fi adventure, but as a case study in decision-making, resource 
+      allocation, operations, and organisational behaviour under extreme constraint.
     </p>
     <p>
-      LP is one of the most widely used tools in management science. It translates real business decisions — 
-      how much to make, how to allocate resources, which mix maximises return — into a mathematical model 
-      that can be solved precisely. Understanding LP means understanding how to find the best answer in 
-      a constrained world.
+      The film turns out to be a surprisingly rich source of management science examples. The Rebel Alliance 
+      operates with scarce resources against a vastly better-resourced opponent. The Empire demonstrates 
+      the dangers of over-centralised command. Every major plot point can be mapped onto a concept from 
+      the course — from network optimisation to decision trees to supply chain failure.
     </p>
+    <div class="pull-quote">
+      "Do, or do not. There is no try."
+      <span class="pq-attr">Yoda — also a reasonable summary of binary decision analysis</span>
+    </div>
   </div>
 
-  <!-- Section 2: Demo -->
+  <!-- Section 2: Interactive scene explorer -->
   <div class="section">
     <div class="section-num">02 — Demonstration</div>
-    <h2>Interactive <em>LP Solver</em></h2>
-    <p>Adjust the objective function weights and see how the optimal corner point changes on the feasible region.</p>
+    <h2>Scene-by-Scene <em>Analysis</em></h2>
+    <p>Select a scene to explore how it connects to a specific management science concept.</p>
 
     <div class="demo-box">
-      <h3>Feasible Region & Objective Function</h3>
-      <canvas id="lpCanvas" width="460" height="340"></canvas>
-      <div style="margin-top:1rem;">
-        <div class="slider-row">
-          <label>Profit/Truck</label>
-          <input type="range" id="p1" min="100" max="800" value="450" step="50">
-          <span class="val" id="p1v">450 CZK</span>
-        </div>
-        <div class="slider-row">
-          <label>Profit/Train</label>
-          <input type="range" id="p2" min="100" max="800" value="550" step="50">
-          <span class="val" id="p2v">550 CZK</span>
+      <h3>Scene Explorer</h3>
+      <div class="scene-tabs">
+        <button class="scene-btn active" onclick="showScene('death-star')">Death Star Briefing</button>
+        <button class="scene-btn" onclick="showScene('trench')">Trench Run</button>
+        <button class="scene-btn" onclick="showScene('han')">Han's Decision</button>
+        <button class="scene-btn" onclick="showScene('plans')">Stolen Plans</button>
+        <button class="scene-btn" onclick="showScene('supply')">Rebel Supply</button>
+      </div>
+
+      <div id="death-star" class="scene-content visible">
+        <div class="scene-card">
+          <div class="scene-half">
+            <div class="sh-label">The Scene</div>
+            <div class="sh-body">The Rebel Alliance receives the Death Star blueprints and must plan a surgical strike against a single two-metre exhaust port. Leadership weighs attack routes, pilot assignments, and probability of success — with no second attempt possible.</div>
+            <span class="sh-concept">Decision Analysis</span>
+          </div>
+          <div class="scene-half">
+            <div class="sh-label">Management Science Connection</div>
+            <div class="sh-body">This is a classic <strong>decision tree</strong> under uncertainty. Two branches: attack the exhaust port (high risk, catastrophic upside) or attempt an alternative strategy (lower risk, no guaranteed outcome). The Rebels implicitly calculate expected value — the probability of success times the payoff (destroying the Death Star) versus the cost of failure. They choose the high-variance option because the alternative is guaranteed defeat.</div>
+          </div>
         </div>
       </div>
-      <div id="result" style="margin-top:1rem; padding:0.8rem 1rem; background:var(--bg); border:1px solid var(--border); font-size:0.88rem;">
-        <span style="color:var(--muted)">Optimal: </span><span id="optTxt" style="color:var(--accent2);"></span>
+
+      <div id="trench" class="scene-content">
+        <div class="scene-card">
+          <div class="scene-half">
+            <div class="sh-label">The Scene</div>
+            <div class="sh-body">Luke, Wedge, and Biggs fly down the Death Star trench in sequence. Two pilots fail their runs before Luke reaches the target. TIE fighters pursue; Vader closes in. Han Solo's last-minute arrival eliminates the constraint — clearing the path for Luke's shot.</div>
+            <span class="sh-concept">Network Optimisation</span>
+          </div>
+          <div class="scene-half">
+            <div class="sh-label">Management Science Connection</div>
+            <div class="sh-body">The trench run is a <strong>network routing problem</strong>. The "nodes" are pilot entry → trench segment → exhaust port target. Each segment has associated risk (TIE fighters = cost). The Rebels send pilots sequentially — effectively testing routes until one succeeds. Han Solo's intervention is a constraint removal: eliminating Vader from the "network" drops the cost of Luke's path from near-infinite to feasible. This mirrors how removing a bottleneck node can transform an impassable route.</div>
+          </div>
+        </div>
       </div>
+
+      <div id="han" class="scene-content">
+        <div class="scene-card">
+          <div class="scene-half">
+            <div class="sh-label">The Scene</div>
+            <div class="sh-body">Han Solo is offered payment to fly the Millennium Falcon to Alderaan. He demands 17,000 credits — enough to pay off Jabba the Hutt. He initially refuses to join the Battle of Yavin (no reward), then returns at the last moment. His reversal changes the outcome of the entire mission.</div>
+            <span class="sh-concept">Decision Trees · Incentives</span>
+          </div>
+          <div class="scene-half">
+            <div class="sh-label">Management Science Connection</div>
+            <div class="sh-body">Han's arc is a two-stage <strong>decision tree</strong> with a changing payoff structure. Initially he evaluates: join the battle (risk of death, uncertain reward) vs. leave (certain payment, no risk). His rational choice is to leave. When new information arrives — loyalty, moral stakes — the <strong>non-monetary payoff</strong> shifts his expected value calculation. This illustrates a key limitation of purely quantitative decision models: they struggle to incorporate values, relationships, and reputation that real decision-makers weigh heavily.</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="plans" class="scene-content">
+        <div class="scene-card">
+          <div class="scene-half">
+            <div class="sh-label">The Scene</div>
+            <div class="sh-body">Princess Leia loads the Death Star technical readouts into R2-D2. The plans travel from Scarif → R2-D2 → Tatooine → Obi-Wan → Yavin IV. Each transfer point risks interception. The Empire deploys the entire Imperial fleet to prevent delivery.</div>
+            <span class="sh-concept">Supply Chain · Information Flow</span>
+          </div>
+          <div class="scene-half">
+            <div class="sh-label">Management Science Connection</div>
+            <div class="sh-body">The movement of the Death Star plans is a <strong>supply chain and information network</strong> problem. The "product" is critical intelligence; the "supply chain" spans multiple nodes (people, droids, planets) each with failure risk. The Empire's response — deploying maximum force to intercept — mirrors a <strong>disruption response strategy</strong>: identify the critical path and attack its most vulnerable node. Leia's redundancy approach (encoding in a droid, separating from the main fleet) is exactly what supply chain resilience theory recommends: multiple routing options for critical information.</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="supply" class="scene-content">
+        <div class="scene-card">
+          <div class="scene-half">
+            <div class="sh-label">The Scene</div>
+            <div class="sh-body">The Rebel Alliance operates from a hidden base on Yavin IV with a handful of X-Wings, Y-Wings, and a limited pilot roster. Against the Death Star — a moon-sized battle station with near-unlimited resources — they must win with what they have. No resupply. No reinforcements.</div>
+            <span class="sh-concept">Resource Allocation · Linear Programming</span>
+          </div>
+          <div class="scene-half">
+            <div class="sh-label">Management Science Connection</div>
+            <div class="sh-body">The Rebel Alliance faces a <strong>constrained resource allocation</strong> problem that is essentially linear programming in practice. Inputs: fixed number of pilots (x₁) and ships (x₂), each with different capabilities and survival probabilities. Objective: maximise the probability of one pilot reaching the exhaust port. Constraints: TIE fighter attrition, time (the Death Star enters firing range), and pilot skill. The briefing scene is literally a corner-point analysis — who flies which route, in what order, to maximise mission success under the tightest possible constraints.</div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <!-- Section 3: Evidence -->
+  <!-- Section 3: Concept mapping table -->
   <div class="section">
     <div class="section-num">03 — Evidence from My Work</div>
-    <h2>Problem <em>Setup</em></h2>
+    <h2>Concept <em>Mapping</em></h2>
+    <p>The film maps onto six distinct management science concepts covered in this course. The same analytical tools we apply to toy factories and food trucks apply — with surprising fidelity — to a galactic civil war.</p>
 
-    <p><strong>Decision variables:</strong></p>
-    <div class="formula-box">
-      <span class="label">Variables</span>
-      x₁ = number of trucks / month &nbsp;·&nbsp; x₂ = number of trains / month
-    </div>
+    <div class="concept-strip">
 
-    <table class="lp-table">
-      <thead>
-        <tr>
-          <th>Cost Component</th>
-          <th>Truck (x₁)</th>
-          <th>Train (x₂)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>Selling Price</td><td>550</td><td>700</td></tr>
-        <tr><td>Wood</td><td>−50</td><td>−10</td></tr>
-        <tr><td>Carpentry Labour</td><td>−30</td><td>−60</td></tr>
-        <tr><td>Finishing Labour</td><td>−20</td><td>−20</td></tr>
-        <tr><td class="highlight">Profit / Unit (CZK)</td><td class="highlight">450</td><td class="highlight">550</td></tr>
-      </tbody>
-    </table>
+      <div class="concept-row side-rebel">
+        <div class="num">1</div>
+        <div class="concept-cell">
+          <div class="cell-label">Film Element</div>
+          <div class="cell-title">Rebel mission planning (Yavin IV briefing)</div>
+          <div class="cell-body">Alliance leadership assesses routes, assigns pilots, and evaluates success probability against an overwhelming enemy with a hard deadline.</div>
+        </div>
+        <div class="concept-cell">
+          <div class="cell-label">Management Science Concept</div>
+          <div class="cell-title">Decision Analysis / Decision Trees</div>
+          <div class="cell-body">Choosing under uncertainty with explicit payoffs and probabilities. The Rebels pick the highest expected-value option even with a low success probability — because the alternative has zero value.</div>
+        </div>
+      </div>
 
-    <div class="formula-box">
-      <span class="label">Objective Function — Maximise</span>
-      Z = 450 x₁ + 550 x₂
-    </div>
+      <div class="concept-row side-empire">
+        <div class="num">2</div>
+        <div class="concept-cell">
+          <div class="cell-label">Film Element</div>
+          <div class="cell-title">The Death Star's single point of failure</div>
+          <div class="cell-body">Despite immense resources, the Empire's superweapon is destroyed by one unshielded exhaust port — a flaw identified through stolen technical plans.</div>
+        </div>
+        <div class="concept-cell">
+          <div class="cell-label">Management Science Concept</div>
+          <div class="cell-title">Oversimplification & Model Limitations</div>
+          <div class="cell-body">Mirrors the key limitation of decision models: heavy dependence on assumptions. The Empire assumed no small fighter could threaten the port. One flawed assumption in a model can make the entire analysis worthless.</div>
+        </div>
+      </div>
 
-    <p><strong>Constraints:</strong> Carpentry hours · Finishing hours · Truck demand · Non-negativity</p>
+      <div class="concept-row side-rebel">
+        <div class="num">3</div>
+        <div class="concept-cell">
+          <div class="cell-label">Film Element</div>
+          <div class="cell-title">Trench run pilot sequencing</div>
+          <div class="cell-body">Three pilots attempt the trench run in sequence. Each run depletes TIE fighter attention; Han Solo eliminates Vader as a blocking constraint just before Luke fires.</div>
+        </div>
+        <div class="concept-cell">
+          <div class="cell-label">Management Science Concept</div>
+          <div class="cell-title">Network Optimisation / Sequencing</div>
+          <div class="cell-body">Route selection through a constrained network with dynamic costs. Removing a key bottleneck (Vader) changes the minimum-cost path — identical to how clearing a node in a TSP network opens new optimal routes.</div>
+        </div>
+      </div>
 
-    <p><strong>Corner Points Evaluated:</strong></p>
-    <div class="corner-grid">
-      <div class="corner-card"><div class="point-label">A</div><div class="point-coords">(0, 0)</div><div class="point-z">Z = 0</div></div>
-      <div class="corner-card"><div class="point-label">B</div><div class="point-coords">(2000, 1000)</div><div class="point-z">Z = 1,450,000</div></div>
-      <div class="corner-card optimal"><div class="point-label">C ★ Optimal</div><div class="point-coords">(1000, 2000)</div><div class="point-z">Z = 1,550,000</div></div>
-      <div class="corner-card"><div class="point-label">D</div><div class="point-coords">(0, 2500)</div><div class="point-z">Z = 1,375,000</div></div>
-      <div class="corner-card"><div class="point-label">E</div><div class="point-coords">(0, 3000)</div><div class="point-z">Z = 1,650,000*</div></div>
-    </div>
+      <div class="concept-row side-empire">
+        <div class="num">4</div>
+        <div class="concept-cell">
+          <div class="cell-label">Film Element</div>
+          <div class="cell-title">Grand Moff Tarkin's command structure</div>
+          <div class="cell-body">Tarkin dismisses Vader's concerns about the Force and overrides strategic input from subordinates. All decisions flow through one authority with no redundancy.</div>
+        </div>
+        <div class="concept-cell">
+          <div class="cell-label">Management Science Concept</div>
+          <div class="cell-title">Centralised Decision-Making Risk</div>
+          <div class="cell-body">Over-centralised command is a classic organisational failure mode. It excludes qualitative information (Vader's instinct about Luke) that quantitative models cannot capture — exactly the "morale and reputation" limitation of decision trees noted in class.</div>
+        </div>
+      </div>
 
-    <p><strong>Objective function slope:</strong> ≈ −0.818 (rise/run of iso-profit line)</p>
+      <div class="concept-row side-rebel">
+        <div class="num">5</div>
+        <div class="concept-cell">
+          <div class="cell-label">Film Element</div>
+          <div class="cell-title">R2-D2 carrying the Death Star plans</div>
+          <div class="cell-body">Critical intelligence is routed through a redundant, low-profile carrier across multiple hand-off points from Scarif to Yavin IV.</div>
+        </div>
+        <div class="concept-cell">
+          <div class="cell-label">Management Science Concept</div>
+          <div class="cell-title">Supply Chain Resilience</div>
+          <div class="cell-body">Multi-node information transfer with disruption risk at each handoff. Leia's decision to use R2-D2 as a separate routing channel is a resilience strategy — maintaining parallel paths for critical data mirrors real logistics redundancy planning.</div>
+        </div>
+      </div>
 
-    <div class="formula-box" style="border-left-color: var(--accent2);">
-      <span class="label">Optimal Solution</span>
-      x₁ = 1,000 trucks &nbsp;·&nbsp; x₂ = 2,000 trains &nbsp;·&nbsp; Z = 1,550,000 CZK / month
+      <div class="concept-row side-rebel">
+        <div class="num">6</div>
+        <div class="concept-cell">
+          <div class="cell-label">Film Element</div>
+          <div class="cell-title">Han Solo turning back at Yavin</div>
+          <div class="cell-body">Han initially leaves (rational self-interest). He returns after weighing non-monetary factors — loyalty, purpose, and the moral cost of inaction.</div>
+        </div>
+        <div class="concept-cell">
+          <div class="cell-label">Management Science Concept</div>
+          <div class="cell-title">Model Limitations — Unmeasurable Factors</div>
+          <div class="cell-body">Quantitative models cannot capture morale, loyalty, or brand reputation. Han's reversal perfectly illustrates the key limitation of decision trees discussed in class: real decisions include factors that resist monetisation.</div>
+        </div>
+      </div>
+
     </div>
 
     <div class="evidence-note">
-      Evidence: handwritten notes showing full cost breakdown table, objective function formulation, corner point enumeration and optimal solution — all completed during class.
+      Evidence: film viewed in class as assigned course material. Analysis based on in-class discussion of how Star Wars: A New Hope demonstrates decision-making under uncertainty, network constraints, resource allocation, and the limits of purely quantitative models — all core themes of the management science curriculum.
     </div>
   </div>
 
-  <!-- Section 4: Learning -->
+  <!-- Section 4 -->
   <div class="section">
     <div class="section-num">04 — What Did I Learn?</div>
     <h2>Knowledge, Skills & <em>Reflection</em></h2>
     <div class="learn-grid">
       <div class="learn-card">
         <div class="learn-label">Knowledge</div>
-        <p>Linear programming transforms a real decision into a solvable mathematical model. The feasible region defined by constraints contains the optimal solution at one of its corner points — never in the interior.</p>
+        <p>Management science concepts are not abstract — they describe real decision structures that appear everywhere, including fiction. Scarcity, constraint, sequencing, and uncertainty are universal problems regardless of context.</p>
       </div>
       <div class="learn-card">
         <div class="learn-label">Skills</div>
-        <p>I practised formulating objective functions, identifying and evaluating corner points, and interpreting the slope of the iso-profit line to determine the optimal production mix.</p>
+        <p>I practised translating a narrative into an analytical framework: identifying decision nodes, mapping resource constraints, and spotting where qualitative factors override quantitative models — a skill that matters as much in real business as in film analysis.</p>
       </div>
       <div class="learn-card">
         <div class="learn-label">Reflection</div>
-        <p>I was surprised that the answer shifts entirely when you change the profit ratio — showing how sensitive decisions are to cost assumptions. LP is a reminder to always check your inputs before trusting the output.</p>
+        <p>The most surprising insight: the Empire loses not because of poor resources, but poor decision modelling. They built a perfect weapon with one catastrophic assumption error. Every model has its Achilles' heel — always question your inputs before you trust your output.</p>
       </div>
     </div>
   </div>
+
 </div>
 
 <footer>
@@ -410,121 +464,19 @@
 </footer>
 
 <script>
-const canvas = document.getElementById('lpCanvas');
-const ctx = canvas.getContext('2d');
-const W = canvas.width, H = canvas.height;
-const PAD = 40;
-
-// Feasible region corner points (scaled: max x1=3000, x2=3500)
-// Constraints (approx for Pinocchio-like problem):
-// Carp: 3x1 + 2x2 <= 6000
-// Fin:  x1 + x2 <= 3000
-// Truck: x1 <= 2000
-// Non-neg
-const corners = [
-  {x:0, y:0, label:'A'},
-  {x:2000, y:0, label:'B'},
-  {x:2000, y:1000, label:'C'},  // carp+fin intersect area
-  {x:1000, y:2000, label:'D', optimal:true},
-  {x:0, y:3000, label:'E'},
-];
-
-const scaleX = x => PAD + (x/3000)*(W-2*PAD);
-const scaleY = y => H - PAD - (y/3500)*(H-2*PAD);
-
-function draw(p1, p2) {
-  ctx.clearRect(0,0,W,H);
-
-  // Background
-  ctx.fillStyle = '#1a1916';
-  ctx.fillRect(0,0,W,H);
-
-  // Grid lines
-  ctx.strokeStyle = '#2e2c28';
-  ctx.lineWidth = 1;
-  for(let v=0; v<=3000; v+=500) {
-    ctx.beginPath(); ctx.moveTo(scaleX(v), PAD); ctx.lineTo(scaleX(v), H-PAD); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(PAD, scaleY(v)); ctx.lineTo(W-PAD, scaleY(v)); ctx.stroke();
-  }
-
-  // Feasible region fill
-  ctx.beginPath();
-  ctx.moveTo(scaleX(0), scaleY(0));
-  ctx.lineTo(scaleX(2000), scaleY(0));
-  ctx.lineTo(scaleX(2000), scaleY(1000));
-  ctx.lineTo(scaleX(1000), scaleY(2000));
-  ctx.lineTo(scaleX(0), scaleY(3000));
-  ctx.closePath();
-  ctx.fillStyle = 'rgba(126,184,160,0.12)';
-  ctx.fill();
-  ctx.strokeStyle = '#7eb8a0';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-
-  // Iso-profit line: x2 = Z/p2 - (p1/p2)*x1
-  // Draw at optimal Z
-  const optZ = p1*1000 + p2*2000;
-  const x1a = 0, y1a = optZ/p2;
-  const x1b = 3000, y1b = (optZ - p1*3000)/p2;
-  ctx.beginPath();
-  ctx.moveTo(scaleX(x1a), scaleY(y1a));
-  ctx.lineTo(scaleX(x1b), scaleY(y1b));
-  ctx.strokeStyle = '#c8a96e';
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([6,4]);
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  // Axes
-  ctx.strokeStyle = '#7a776f';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath(); ctx.moveTo(PAD, PAD); ctx.lineTo(PAD, H-PAD); ctx.lineTo(W-PAD, H-PAD); ctx.stroke();
-
-  // Axis labels
-  ctx.fillStyle = '#7a776f';
-  ctx.font = '11px DM Sans, sans-serif';
-  ctx.fillText('x₁ (trucks)', W-PAD-60, H-8);
-  ctx.save(); ctx.translate(12, H/2); ctx.rotate(-Math.PI/2);
-  ctx.fillText('x₂ (trains)', -30, 0); ctx.restore();
-
-  // Corner points
-  corners.forEach(c => {
-    const z = p1*c.x + p2*c.y;
-    const isOpt = z === Math.max(...corners.map(cc => p1*cc.x + p2*cc.y));
-    ctx.beginPath();
-    ctx.arc(scaleX(c.x), scaleY(c.y), isOpt ? 6 : 4, 0, Math.PI*2);
-    ctx.fillStyle = isOpt ? '#c8a96e' : '#7eb8a0';
-    ctx.fill();
-    ctx.font = `${isOpt?'bold ':' '}11px DM Sans, sans-serif`;
-    ctx.fillStyle = isOpt ? '#c8a96e' : '#a09c93';
-    ctx.fillText(`${c.label}(${c.x/1000}k,${c.y/1000}k)`, scaleX(c.x)+8, scaleY(c.y)-6);
-  });
-
-  // Legend
-  ctx.font = '10px DM Sans';
-  ctx.fillStyle = '#c8a96e';
-  ctx.fillText('— Iso-profit line', W-160, 20);
-  ctx.fillStyle = '#7eb8a0';
-  ctx.fillText('■ Feasible region', W-160, 34);
-
-  // Result
-  const bestZ = Math.max(...corners.map(c => p1*c.x + p2*c.y));
-  const best = corners.find(c => p1*c.x + p2*c.y === bestZ);
-  document.getElementById('optTxt').textContent =
-    `x₁ = ${best.x.toLocaleString()}, x₂ = ${best.y.toLocaleString()} → Z = ${bestZ.toLocaleString()} CZK`;
+function showScene(id) {
+  document.querySelectorAll('.scene-content').forEach(el => el.classList.remove('visible'));
+  document.querySelectorAll('.scene-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById(id).classList.add('visible');
+  event.target.classList.add('active');
 }
-
-function update() {
-  const p1 = +document.getElementById('p1').value;
-  const p2 = +document.getElementById('p2').value;
-  document.getElementById('p1v').textContent = p1 + ' CZK';
-  document.getElementById('p2v').textContent = p2 + ' CZK';
-  draw(p1, p2);
-}
-
-document.getElementById('p1').addEventListener('input', update);
-document.getElementById('p2').addEventListener('input', update);
-update();
 </script>
 </body>
 </html>
+HTMLEOF
+echo "Done"
+Output
+
+Done
+Done
+
