@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project 5 — Street Food Truck | Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0f0e0c; --surface:#1a1916; --accent:#c8a96e; --accent2:#7eb8a0; --text:#e8e4dc; --muted:#7a776f; --border:#2e2c28; }
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; font-weight:300; line-height:1.7; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; }
+  nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:1.2rem 3rem; display:flex; align-items:center; justify-content:space-between; background:rgba(15,14,12,0.9); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); }
+  nav a { text-decoration:none; color:var(--muted); font-size:0.82rem; transition:color 0.2s; }
+  nav a:hover { color:var(--accent); }
+  nav .project-id { font-family:'Playfair Display',serif; font-style:italic; color:var(--accent); font-size:0.9rem; }
+  .page-wrap { position:relative; z-index:1; max-width:860px; margin:0 auto; padding:8rem 3rem 5rem; }
+  .back-link { display:inline-flex; align-items:center; gap:0.5rem; font-size:0.78rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); text-decoration:none; margin-bottom:3rem; transition:color 0.2s; }
+  .back-link:hover { color:var(--accent); }
+  .project-eyebrow { font-size:0.72rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); margin-bottom:0.8rem; display:flex; align-items:center; gap:0.8rem; }
+  .project-eyebrow::before { content:''; display:block; width:1.5rem; height:1px; background:var(--accent); }
+  h1 { font-family:'Playfair Display',serif; font-size:clamp(2.2rem,5vw,3.6rem); line-height:1.1; font-weight:700; margin-bottom:0.5rem; }
+  h1 em { font-style:italic; color:var(--accent); }
+  .subtitle { font-size:0.9rem; color:var(--muted); margin-bottom:3.5rem; }
+  .section { margin-bottom:4rem; padding-top:1rem; border-top:1px solid var(--border); }
+  .section-num { font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:1.2rem; }
+  h2 { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:700; margin-bottom:1rem; }
+  h2 em { font-style:italic; color:var(--accent); }
+  p { color:#a09c93; margin-bottom:1rem; font-size:0.95rem; }
+  strong { color:var(--text); font-weight:500; }
+
+  .formula-box { background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--accent); padding:1.2rem 1.5rem; margin:1.5rem 0; font-family:'Playfair Display',serif; font-style:italic; font-size:1.05rem; color:var(--text); }
+  .formula-box .label { font-family:'DM Sans',sans-serif; font-style:normal; font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:0.4rem; }
+
+  /* Demo */
+  .demo-box { background:var(--surface); border:1px solid var(--border); padding:1.5rem; margin:1.5rem 0; }
+  .demo-box h3 { font-family:'Playfair Display',serif; font-size:1rem; margin-bottom:1rem; color:var(--text); }
+  canvas { display:block; width:100%; max-width:500px; }
+  .slider-row { display:flex; align-items:center; gap:1rem; margin:0.6rem 0; font-size:0.82rem; color:var(--muted); }
+  .slider-row label { min-width:120px; }
+  .slider-row input[type=range] { flex:1; accent-color:var(--accent); }
+  .slider-row .val { min-width:70px; color:var(--accent); font-size:0.85rem; }
+  #sfResult { margin-top:1rem; padding:0.8rem 1rem; background:var(--bg); border:1px solid var(--border); font-size:0.88rem; }
+
+  /* Corner points */
+  .corner-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:0.8rem; margin:1.5rem 0; }
+  .corner-card { background:var(--surface); border:1px solid var(--border); padding:0.9rem; text-align:center; }
+  .corner-card.optimal { border-color:var(--accent2); }
+  .corner-card .point-label { font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:0.3rem; }
+  .corner-card .point-coords { font-family:'Playfair Display',serif; font-size:1.05rem; color:var(--text); }
+  .corner-card .point-z { font-size:0.82rem; color:var(--accent2); margin-top:0.3rem; }
+  .corner-card.optimal .point-label { color:var(--accent2); }
+
+  .learn-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1px; background:var(--border); margin-top:1.5rem; }
+  .learn-card { background:var(--bg); padding:1.5rem; }
+  .learn-card .learn-label { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent); margin-bottom:0.6rem; }
+  .learn-card p { font-size:0.88rem; }
+
+  footer { position:relative; z-index:1; border-top:1px solid var(--border); padding:2rem 3rem; display:flex; align-items:center; justify-content:space-between; }
+  footer p { font-size:0.78rem; color:var(--muted); margin:0; }
+  footer a { color:var(--accent); text-decoration:none; font-size:0.78rem; }
+  @media(max-width:640px) { nav{padding:1rem 1.2rem;} .page-wrap{padding:7rem 1.2rem 3rem;} footer{flex-direction:column;gap:1rem;padding:1.5rem 1.2rem;} }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html">← Portfolio</a>
+  <span class="project-id">Project 05 — Linear Programming</span>
+</nav>
+
+<div class="page-wrap">
+  <a class="back-link" href="index.html">← Back to Portfolio</a>
+
+  <div class="project-eyebrow">Project 05 / Linear Programming</div>
+  <h1>Street Food <em>Truck</em></h1>
+  <p class="subtitle">Maximising revenue across a mixed fleet of taco and burrito trucks under budget and availability constraints</p>
+
+  <div class="section">
+    <div class="section-num">01 — Overview</div>
+    <h2>The Fleet Mix <em>Problem</em></h2>
+    <p>
+      A street food company wants to maximise its daily revenue by deciding how many 
+      <strong>taco trucks</strong> and <strong>burrito trucks</strong> to operate. Each truck type generates 
+      different revenue but costs different amounts and has limited availability. This is a classic 
+      <strong>linear programming</strong> problem — find the optimal mix under constraints.
+    </p>
+    <p>
+      This problem is a second application of LP, reinforcing the method from the Pinocchio Problem 
+      (Project 1) but in a different operational context: fleet management vs. production planning. 
+      The same graphical technique — feasible region, corner points, iso-profit line slope — applies.
+    </p>
+  </div>
+
+  <div class="section">
+    <div class="section-num">02 — Demonstration</div>
+    <h2>Interactive <em>Feasibility Explorer</em></h2>
+    <p>Adjust the objective function weights to explore how the optimal mix changes.</p>
+
+    <div class="demo-box">
+      <h3>Feasible Region — Taco vs Burrito Trucks</h3>
+      <canvas id="sfCanvas" width="480" height="340"></canvas>
+      <div style="margin-top:1rem;">
+        <div class="slider-row">
+          <label>Revenue / Taco truck</label>
+          <input type="range" id="r1" min="500" max="5000" value="2000" step="500">
+          <span class="val" id="r1v">2,000€</span>
+        </div>
+        <div class="slider-row">
+          <label>Revenue / Burrito truck</label>
+          <input type="range" id="r2" min="500" max="8000" value="5000" step="500">
+          <span class="val" id="r2v">5,000€</span>
+        </div>
+      </div>
+      <div id="sfResult"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-num">03 — Evidence from My Work</div>
+    <h2>Problem Formulation & <em>Solution</em></h2>
+
+    <p><strong>Decision variables:</strong></p>
+    <div class="formula-box">
+      <span class="label">Variables</span>
+      x₁ = number of taco trucks &nbsp;·&nbsp; x₂ = number of burrito trucks
+    </div>
+
+    <div class="formula-box">
+      <span class="label">Objective Function — Maximise</span>
+      Z = 2,000 x₁ + 5,000 x₂
+    </div>
+
+    <p><strong>Constraints from class notes:</strong></p>
+    <div class="formula-box" style="font-size:0.95rem;">
+      <span class="label">Budget Constraint</span>
+      30,000 x₁ + 40,000 x₂ ≤ 360,000 &nbsp;·&nbsp; Simplified: 3x₁ + 4x₂ ≤ 36
+    </div>
+    <div class="formula-box" style="font-size:0.95rem; border-left-color:var(--accent2);">
+      <span class="label">Availability Constraints</span>
+      x₁ ≤ 8 (max 8 taco trucks) &nbsp;·&nbsp; x₂ ≤ 6 (max 6 burrito trucks) &nbsp;·&nbsp; x₁, x₂ ≥ 0
+    </div>
+
+    <p><strong>Boundary lines for graphical solution:</strong></p>
+    <ul style="list-style:none; display:grid; gap:0.4rem; margin:1rem 0 1.5rem;">
+      <li style="font-size:0.88rem; color:#a09c93;"><span style="color:var(--accent); margin-right:0.6rem;">·</span>3x₁ + 4x₂ = 36</li>
+      <li style="font-size:0.88rem; color:#a09c93;"><span style="color:var(--accent); margin-right:0.6rem;">·</span>x₁ = 8</li>
+      <li style="font-size:0.88rem; color:#a09c93;"><span style="color:var(--accent); margin-right:0.6rem;">·</span>x₂ = 6</li>
+    </ul>
+
+    <p><strong>Corner Points evaluated:</strong></p>
+    <div class="corner-grid">
+      <div class="corner-card"><div class="point-label">A</div><div class="point-coords">(0, 0)</div><div class="point-z">Z = 0</div></div>
+      <div class="corner-card"><div class="point-label">B</div><div class="point-coords">(8, 0)</div><div class="point-z">Z = 16,000</div></div>
+      <div class="corner-card"><div class="point-label">C</div><div class="point-coords">(8, 3)</div><div class="point-z">Z = 31,000</div></div>
+      <div class="corner-card optimal"><div class="point-label">D ★ Optimal</div><div class="point-coords">(4, 6)</div><div class="point-z">Z = 38,000</div></div>
+      <div class="corner-card"><div class="point-label">E</div><div class="point-coords">(0, 6)</div><div class="point-z">Z = 30,000</div></div>
+    </div>
+
+    <p><strong>Slope of objective function:</strong> m = −0.4 (x₂ = Z/5000 − 0.4 x₁)</p>
+
+    <div class="formula-box" style="border-left-color:var(--accent2);">
+      <span class="label">Optimal Solution</span>
+      x₁ = 4 taco trucks &nbsp;·&nbsp; x₂ = 6 burrito trucks &nbsp;·&nbsp; Z = 38,000€ per day
+    </div>
+
+    <p style="font-style:italic; color:var(--muted); font-size:0.85rem;">
+      Evidence: handwritten problem formulation with constraints and feasible region graph, corner point (4,6) marked as D with value Z=38,000, slope calculation and objective function derivation — completed during class.
+    </p>
+  </div>
+
+  <div class="section">
+    <div class="section-num">04 — What Did I Learn?</div>
+    <h2>Knowledge, Skills & <em>Reflection</em></h2>
+    <div class="learn-grid">
+      <div class="learn-card">
+        <div class="learn-label">Knowledge</div>
+        <p>Repeating LP in a new context (fleet vs production) cemented the method. The slope of the objective function tells us the rate at which one variable can substitute for another while keeping profit constant — a powerful sensitivity concept.</p>
+      </div>
+      <div class="learn-card">
+        <div class="learn-label">Skills</div>
+        <p>I practised simplifying constraints (dividing through by 10,000), plotting boundary lines, identifying corner points algebraically, and computing the objective function slope to match the iso-profit line to the feasible region.</p>
+      </div>
+      <div class="learn-card">
+        <div class="learn-label">Reflection</div>
+        <p>It was useful to see LP applied to a fleet/service context rather than manufacturing. The model clearly shows that burrito trucks generate more revenue per unit — so the optimal solution maxes them out first, then fills remaining budget with taco trucks.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>Luise von Blumenthal · Management Science Portfolio</p>
+  <a href="index.html">← Back to Portfolio</a>
+</footer>
+
+<script>
+const canvas = document.getElementById('sfCanvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const PAD = 45;
+
+// x1: taco [0,10], x2: burrito [0,9]
+const X1MAX = 10, X2MAX = 9;
+const sx = x => PAD + (x/X1MAX)*(W-2*PAD);
+const sy = y => H-PAD - (y/X2MAX)*(H-2*PAD);
+
+const corners = [
+  {x:0, y:0, label:'A'},
+  {x:8, y:0, label:'B'},
+  {x:8, y:3, label:'C'},
+  {x:4, y:6, label:'D'},
+  {x:0, y:6, label:'E'},
+];
+
+function draw(r1, r2) {
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#1a1916';
+  ctx.fillRect(0,0,W,H);
+
+  // Grid
+  ctx.strokeStyle = '#2e2c28';
+  ctx.lineWidth = 1;
+  for(let v=0; v<=10; v+=2) {
+    ctx.beginPath(); ctx.moveTo(sx(v), PAD); ctx.lineTo(sx(v), H-PAD); ctx.stroke();
+  }
+  for(let v=0; v<=9; v+=2) {
+    ctx.beginPath(); ctx.moveTo(PAD, sy(v)); ctx.lineTo(W-PAD, sy(v)); ctx.stroke();
+  }
+
+  // Feasible region
+  ctx.beginPath();
+  ctx.moveTo(sx(0), sy(0));
+  ctx.lineTo(sx(8), sy(0));
+  ctx.lineTo(sx(8), sy(3));
+  ctx.lineTo(sx(4), sy(6));
+  ctx.lineTo(sx(0), sy(6));
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(126,184,160,0.12)';
+  ctx.fill();
+  ctx.strokeStyle = '#7eb8a0';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Constraint lines
+  // 3x1+4x2=36: x2=(36-3x1)/4; at x1=0 -> x2=9; at x1=10 -> x2=1.5
+  ctx.beginPath();
+  ctx.moveTo(sx(0), sy(9));
+  ctx.lineTo(sx(10), sy(1.5));
+  ctx.strokeStyle = '#5a5650';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3,3]);
+  ctx.stroke();
+  // x1=8
+  ctx.beginPath();
+  ctx.moveTo(sx(8), sy(0));
+  ctx.lineTo(sx(8), sy(9));
+  ctx.stroke();
+  // x2=6
+  ctx.beginPath();
+  ctx.moveTo(sx(0), sy(6));
+  ctx.lineTo(sx(10), sy(6));
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Iso-profit at optimal D(4,6)
+  const optZ = r1*4 + r2*6;
+  const ipa = 0, ipb = optZ/r2;
+  const ipc = X1MAX, ipd = (optZ - r1*X1MAX)/r2;
+  ctx.beginPath();
+  ctx.moveTo(sx(ipa), sy(Math.min(ipb, X2MAX+1)));
+  ctx.lineTo(sx(ipc), sy(ipd));
+  ctx.strokeStyle = '#c8a96e';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6,4]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Axes
+  ctx.strokeStyle = '#7a776f';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(PAD, PAD); ctx.lineTo(PAD, H-PAD); ctx.lineTo(W-PAD, H-PAD); ctx.stroke();
+  ctx.fillStyle = '#7a776f';
+  ctx.font = '11px DM Sans';
+  ctx.fillText('x₁ (taco trucks)', W-PAD-90, H-8);
+  ctx.save(); ctx.translate(12, H/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('x₂ (burrito trucks)', -60, 0); ctx.restore();
+
+  // Axis tick labels
+  ctx.fillStyle = '#4a4840';
+  ctx.font = '10px DM Sans';
+  for(let v=0; v<=10; v+=2) ctx.fillText(v, sx(v)-4, H-PAD+14);
+  for(let v=0; v<=9; v+=2) ctx.fillText(v, PAD-20, sy(v)+4);
+
+  // Corner points
+  const bestZ = Math.max(...corners.map(c => r1*c.x + r2*c.y));
+  corners.forEach(c => {
+    const z = r1*c.x + r2*c.y;
+    const isOpt = z === bestZ;
+    ctx.beginPath();
+    ctx.arc(sx(c.x), sy(c.y), isOpt ? 7 : 5, 0, Math.PI*2);
+    ctx.fillStyle = isOpt ? '#c8a96e' : '#7eb8a0';
+    ctx.fill();
+    ctx.font = `${isOpt?'bold ':' '}11px DM Sans`;
+    ctx.fillStyle = isOpt ? '#c8a96e' : '#a09c93';
+    ctx.fillText(`${c.label}(${c.x},${c.y})`, sx(c.x)+9, sy(c.y)-6);
+  });
+
+  // Result
+  const best = corners.find(c => r1*c.x + r2*c.y === bestZ);
+  document.getElementById('sfResult').innerHTML =
+    `<span style="color:var(--muted)">Optimal: </span>
+     <span style="color:var(--accent2)">x₁=${best.x} taco, x₂=${best.y} burrito → Z = ${bestZ.toLocaleString()}€</span>`;
+}
+
+function update() {
+  const r1 = +document.getElementById('r1').value;
+  const r2 = +document.getElementById('r2').value;
+  document.getElementById('r1v').textContent = r1.toLocaleString()+'€';
+  document.getElementById('r2v').textContent = r2.toLocaleString()+'€';
+  draw(r1, r2);
+}
+
+document.getElementById('r1').addEventListener('input', update);
+document.getElementById('r2').addEventListener('input', update);
+update();
+</script>
+</body>
+</html>

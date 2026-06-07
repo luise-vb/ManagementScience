@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project 4 — Picking Heuristics | Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0f0e0c; --surface:#1a1916; --accent:#c8a96e; --accent2:#7eb8a0; --text:#e8e4dc; --muted:#7a776f; --border:#2e2c28; }
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; font-weight:300; line-height:1.7; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; }
+  nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:1.2rem 3rem; display:flex; align-items:center; justify-content:space-between; background:rgba(15,14,12,0.9); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); }
+  nav a { text-decoration:none; color:var(--muted); font-size:0.82rem; transition:color 0.2s; }
+  nav a:hover { color:var(--accent); }
+  nav .project-id { font-family:'Playfair Display',serif; font-style:italic; color:var(--accent); font-size:0.9rem; }
+  .page-wrap { position:relative; z-index:1; max-width:860px; margin:0 auto; padding:8rem 3rem 5rem; }
+  .back-link { display:inline-flex; align-items:center; gap:0.5rem; font-size:0.78rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); text-decoration:none; margin-bottom:3rem; transition:color 0.2s; }
+  .back-link:hover { color:var(--accent); }
+  .project-eyebrow { font-size:0.72rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); margin-bottom:0.8rem; display:flex; align-items:center; gap:0.8rem; }
+  .project-eyebrow::before { content:''; display:block; width:1.5rem; height:1px; background:var(--accent); }
+  h1 { font-family:'Playfair Display',serif; font-size:clamp(2.2rem,5vw,3.6rem); line-height:1.1; font-weight:700; margin-bottom:0.5rem; }
+  h1 em { font-style:italic; color:var(--accent); }
+  .subtitle { font-size:0.9rem; color:var(--muted); margin-bottom:3.5rem; }
+  .section { margin-bottom:4rem; padding-top:1rem; border-top:1px solid var(--border); }
+  .section-num { font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:1.2rem; }
+  h2 { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:700; margin-bottom:1rem; }
+  h2 em { font-style:italic; color:var(--accent); }
+  p { color:#a09c93; margin-bottom:1rem; font-size:0.95rem; }
+  strong { color:var(--text); font-weight:500; }
+
+  /* Warehouse demo */
+  .demo-box { background:var(--surface); border:1px solid var(--border); padding:1.5rem; margin:1.5rem 0; }
+  .demo-box h3 { font-family:'Playfair Display',serif; font-size:1rem; margin-bottom:1rem; color:var(--text); }
+  .wh-grid-wrap { overflow-x:auto; }
+  canvas { display:block; max-width:100%; }
+
+  .heuristic-tabs { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1rem; }
+  .tab-btn { background:var(--bg); border:1px solid var(--border); color:var(--muted); padding:0.4rem 1rem; font-size:0.78rem; cursor:pointer; font-family:'DM Sans',sans-serif; letter-spacing:0.05em; transition:all 0.2s; }
+  .tab-btn:hover, .tab-btn.active { background:var(--accent); color:var(--bg); border-color:var(--accent); }
+
+  .heuristic-desc { padding:0.8rem 1rem; background:var(--bg); border:1px solid var(--border); font-size:0.85rem; color:var(--muted); margin-top:0.8rem; }
+  .heuristic-desc strong { color:var(--text); }
+
+  /* Heuristic comparison table */
+  .heuristic-table { width:100%; border-collapse:collapse; margin:1.5rem 0; font-size:0.88rem; }
+  .heuristic-table th { background:var(--surface); color:var(--accent); font-weight:500; padding:0.7rem 1rem; text-align:left; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; border:1px solid var(--border); }
+  .heuristic-table td { padding:0.65rem 1rem; border:1px solid var(--border); color:#a09c93; }
+  .heuristic-table tr:hover td { background:var(--surface); }
+
+  /* Zone layout from notes */
+  .zone-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin:1.5rem 0; }
+  .zone-card { background:var(--surface); border:1px solid var(--border); padding:1rem; }
+  .zone-name { font-size:0.72rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent); margin-bottom:0.4rem; }
+  .zone-items { font-size:0.85rem; color:#a09c93; }
+
+  .learn-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1px; background:var(--border); margin-top:1.5rem; }
+  .learn-card { background:var(--bg); padding:1.5rem; }
+  .learn-card .learn-label { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent); margin-bottom:0.6rem; }
+  .learn-card p { font-size:0.88rem; }
+
+  footer { position:relative; z-index:1; border-top:1px solid var(--border); padding:2rem 3rem; display:flex; align-items:center; justify-content:space-between; }
+  footer p { font-size:0.78rem; color:var(--muted); margin:0; }
+  footer a { color:var(--accent); text-decoration:none; font-size:0.78rem; }
+  @media(max-width:640px) { nav{padding:1rem 1.2rem;} .page-wrap{padding:7rem 1.2rem 3rem;} footer{flex-direction:column;gap:1rem;padding:1.5rem 1.2rem;} .zone-grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html">← Portfolio</a>
+  <span class="project-id">Project 04 — Warehouse Operations</span>
+</nav>
+
+<div class="page-wrap">
+  <a class="back-link" href="index.html">← Back to Portfolio</a>
+
+  <div class="project-eyebrow">Project 04 / Warehouse Operations</div>
+  <h1>Picking <em>Heuristics</em></h1>
+  <p class="subtitle">Comparing order-picking strategies to minimise travel distance across a zoned warehouse layout</p>
+
+  <div class="section">
+    <div class="section-num">01 — Overview</div>
+    <h2>The Order-Picking <em>Challenge</em></h2>
+    <p>
+      Order picking — retrieving items from warehouse shelves to fulfil customer orders — accounts for 
+      up to <strong>55% of warehouse operating costs</strong>. Choosing the right picking sequence 
+      dramatically reduces travel distance, labour time, and cost.
+    </p>
+    <p>
+      This exercise introduced three heuristics applied to a warehouse divided into six zones (A–F), 
+      each containing multiple shelf locations (x₁–x₁₂). A heuristic is a practical rule-of-thumb 
+      that finds a good-enough solution quickly, without guaranteeing mathematical optimality.
+    </p>
+  </div>
+
+  <div class="section">
+    <div class="section-num">02 — Demonstration</div>
+    <h2>Visualise Each <em>Strategy</em></h2>
+    <p>Select a picking heuristic to see the traversal order through the warehouse layout.</p>
+
+    <div class="demo-box">
+      <h3>Warehouse Layout (6 zones, 12 shelf positions)</h3>
+      <div class="heuristic-tabs">
+        <button class="tab-btn active" onclick="setHeuristic(0)">1. Top-to-Bottom</button>
+        <button class="tab-btn" onclick="setHeuristic(1)">2. Zone Collection</button>
+        <button class="tab-btn" onclick="setHeuristic(2)">3. Cluster Collection</button>
+      </div>
+      <canvas id="whCanvas" width="500" height="340"></canvas>
+      <div class="heuristic-desc" id="hDesc"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-num">03 — Evidence from My Work</div>
+    <h2>Warehouse Layout & <em>Picking Routes</em></h2>
+
+    <p>From my class notes — the warehouse is divided into 6 zones with shelf positions assigned as follows:</p>
+
+    <div class="zone-grid">
+      <div class="zone-card"><div class="zone-name">Zone A</div><div class="zone-items">x₁, x₂</div></div>
+      <div class="zone-card"><div class="zone-name">Zone F</div><div class="zone-items">x₃</div></div>
+      <div class="zone-card"><div class="zone-name">Zone B</div><div class="zone-items">x₄, x₅</div></div>
+      <div class="zone-card"><div class="zone-name">Zone E</div><div class="zone-items">x₆, x₇</div></div>
+      <div class="zone-card"><div class="zone-name">Zone C</div><div class="zone-items">x₈, x₉</div></div>
+      <div class="zone-card"><div class="zone-name">Zone D</div><div class="zone-items">x₁₀, x₁₁, x₁₂</div></div>
+    </div>
+
+    <p><strong>Three heuristics compared:</strong></p>
+
+    <table class="heuristic-table">
+      <thead>
+        <tr><th>Heuristic</th><th>Order Sequence</th><th>Logic</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Top-to-Bottom</strong></td>
+          <td>x₁→x₂→x₃→x₄→x₅→x₆→x₇→x₈→x₉→x₁₀→x₁₁→x₁₂</td>
+          <td>Pick items in sequential order from first to last shelf position</td>
+        </tr>
+        <tr>
+          <td><strong>2. Zone Collection</strong></td>
+          <td>A→B→C→D→E→F</td>
+          <td>Complete all picks within a zone before moving to the next zone</td>
+        </tr>
+        <tr>
+          <td><strong>3. Cluster Collection</strong></td>
+          <td>Largest cluster first: (x₁₁+x₁₂+x₁₀+x₆+x₇)→(x₈+x₉+x₅+x₃)→(x₄+x₁)→x₃</td>
+          <td>Group items by proximity; pick the densest cluster of nearby shelves first</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="font-style:italic;color:var(--muted);font-size:0.85rem;">
+      Evidence: handwritten warehouse diagram with zones A–F and items x₁–x₁₂ mapped, three traversal sequences written out with arrows showing order of collection, completed during class session (6/1).
+    </p>
+  </div>
+
+  <div class="section">
+    <div class="section-num">04 — What Did I Learn?</div>
+    <h2>Knowledge, Skills & <em>Reflection</em></h2>
+    <div class="learn-grid">
+      <div class="learn-card">
+        <div class="learn-label">Knowledge</div>
+        <p>Heuristics trade optimality for speed. In warehouse operations, finding a mathematically perfect route is computationally infeasible for large layouts — heuristics give practical, near-optimal solutions quickly.</p>
+      </div>
+      <div class="learn-card">
+        <div class="learn-label">Skills</div>
+        <p>I practised reading warehouse layouts, tracing picking routes through zone structures, and comparing strategies based on total estimated travel. I learned to think spatially about sequencing decisions.</p>
+      </div>
+      <div class="learn-card">
+        <div class="learn-label">Reflection</div>
+        <p>I found it surprising that the "logical" top-to-bottom approach isn't always fastest — cluster picking can dramatically cut travel by grouping nearby items. The best strategy depends on the order profile, not just the layout.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>Luise von Blumenthal · Management Science Portfolio</p>
+  <a href="project5.html">Next: Street Food Truck →</a>
+</footer>
+
+<script>
+const canvas = document.getElementById('whCanvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+
+const zones = [
+  {name:'A', x:30, y:30, w:180, h:90, color:'rgba(200,169,110,0.08)', border:'#c8a96e'},
+  {name:'F', x:260, y:30, w:210, h:90, color:'rgba(126,184,160,0.08)', border:'#7eb8a0'},
+  {name:'B', x:30, y:140, w:180, h:80, color:'rgba(200,169,110,0.08)', border:'#c8a96e'},
+  {name:'E', x:260, y:140, w:210, h:80, color:'rgba(126,184,160,0.08)', border:'#7eb8a0'},
+  {name:'C', x:30, y:240, w:180, h:80, color:'rgba(200,169,110,0.08)', border:'#c8a96e'},
+  {name:'D', x:260, y:240, w:210, h:80, color:'rgba(126,184,160,0.08)', border:'#7eb8a0'},
+];
+
+const shelves = [
+  {id:'x₁',z:'A',cx:80, cy:70}, {id:'x₂',z:'A',cx:160,cy:70},
+  {id:'x₃',z:'F',cx:355,cy:70},
+  {id:'x₄',z:'B',cx:80, cy:178}, {id:'x₅',z:'B',cx:160,cy:178},
+  {id:'x₆',z:'E',cx:310,cy:178}, {id:'x₇',z:'E',cx:420,cy:178},
+  {id:'x₈',z:'C',cx:80, cy:278}, {id:'x₉',z:'C',cx:160,cy:278},
+  {id:'x₁₀',z:'D',cx:300,cy:270},{id:'x₁₁',z:'D',cx:370,cy:290},{id:'x₁₂',z:'D',cx:440,cy:270},
+];
+
+const heuristics = [
+  {
+    name:'Top-to-Bottom',
+    order: ['x₁','x₂','x₃','x₄','x₅','x₆','x₇','x₈','x₉','x₁₀','x₁₁','x₁₂'],
+    desc: '<strong>Top-to-Bottom:</strong> Pick items in sequential order x₁ → x₁₂. Simple and easy to implement — just scan from start to finish. Best when items are randomly distributed with no spatial clustering.',
+  },
+  {
+    name:'Zone Collection',
+    order: ['x₁','x₂','x₄','x₅','x₈','x₉','x₁₀','x₁₁','x₁₂','x₆','x₇','x₃'],
+    desc: '<strong>Zone Collection:</strong> Complete all picks within Zone A → B → C → D → E → F before moving on. Reduces cross-zone travel and allows parallel picking if multiple pickers are assigned per zone.',
+  },
+  {
+    name:'Cluster Collection (Largest First)',
+    order: ['x₁₁','x₁₂','x₁₀','x₆','x₇','x₈','x₉','x₅','x₄','x₃','x₂','x₁'],
+    desc: '<strong>Cluster Collection:</strong> Group nearby shelves, pick the densest cluster first. Sequence: D cluster (x₁₁+x₁₂+x₁₀+x₆+x₇) → C+B cluster (x₈+x₉+x₅) → A+F cluster. Minimises total travel for spatially grouped orders.',
+  },
+];
+
+let currentH = 0;
+let animStep = 0;
+let animTimer = null;
+
+function drawWarehouse(order, step) {
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#1a1916';
+  ctx.fillRect(0,0,W,H);
+
+  // Zones
+  zones.forEach(z => {
+    ctx.fillStyle = z.color;
+    ctx.fillRect(z.x, z.y, z.w, z.h);
+    ctx.strokeStyle = z.border;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4,3]);
+    ctx.strokeRect(z.x, z.y, z.w, z.h);
+    ctx.setLineDash([]);
+    ctx.fillStyle = z.border;
+    ctx.font = 'bold 10px DM Sans';
+    ctx.fillText('Zone '+z.name, z.x+6, z.y+14);
+  });
+
+  // Draw path up to step
+  if(step > 0) {
+    ctx.beginPath();
+    const s0 = shelves.find(s=>s.id===order[0]);
+    ctx.moveTo(s0.cx, s0.cy);
+    for(let i=1; i<step && i<order.length; i++) {
+      const s = shelves.find(sh=>sh.id===order[i]);
+      ctx.lineTo(s.cx, s.cy);
+    }
+    ctx.strokeStyle = 'rgba(200,169,110,0.4)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  // Shelves
+  shelves.forEach((s, idx) => {
+    const pickIdx = order.indexOf(s.id);
+    const picked = pickIdx < step;
+    const current = pickIdx === step-1;
+    ctx.beginPath();
+    ctx.arc(s.cx, s.cy, current ? 12 : 9, 0, Math.PI*2);
+    ctx.fillStyle = current ? '#c8a96e' : picked ? '#2e4a3e' : '#2e2c28';
+    ctx.fill();
+    ctx.strokeStyle = picked ? '#7eb8a0' : current ? '#c8a96e' : '#4a4840';
+    ctx.lineWidth = current ? 2 : 1;
+    ctx.stroke();
+    ctx.fillStyle = picked ? '#7eb8a0' : current ? '#0f0e0c' : '#7a776f';
+    ctx.font = `${current?'bold ':' '}9px DM Sans`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(s.id, s.cx, s.cy);
+
+    // Step number
+    if(picked || current) {
+      ctx.fillStyle = '#c8a96e';
+      ctx.font = '8px DM Sans';
+      ctx.fillText(pickIdx+1, s.cx+11, s.cy-9);
+    }
+  });
+  ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+}
+
+function animate(h) {
+  if(animTimer) clearInterval(animTimer);
+  animStep = 0;
+  const order = heuristics[h].order;
+  drawWarehouse(order, 0);
+  animTimer = setInterval(() => {
+    animStep++;
+    drawWarehouse(order, animStep);
+    if(animStep >= order.length) { clearInterval(animTimer); animTimer=null; }
+  }, 350);
+}
+
+function setHeuristic(idx) {
+  currentH = idx;
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+  document.getElementById('hDesc').innerHTML = heuristics[idx].desc;
+  animate(idx);
+}
+
+setHeuristic(0);
+</script>
+</body>
+</html>

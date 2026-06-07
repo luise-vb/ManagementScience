@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project 3 — Decision Trees | Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0f0e0c; --surface:#1a1916; --accent:#c8a96e; --accent2:#7eb8a0; --text:#e8e4dc; --muted:#7a776f; --border:#2e2c28; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; font-weight:300; line-height:1.7; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; }
+  nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:1.2rem 3rem; display:flex; align-items:center; justify-content:space-between; background:rgba(15,14,12,0.9); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); }
+  nav a { text-decoration:none; color:var(--muted); font-size:0.82rem; transition:color 0.2s; }
+  nav a:hover { color:var(--accent); }
+  nav .project-id { font-family:'Playfair Display',serif; font-style:italic; color:var(--accent); font-size:0.9rem; }
+  .page-wrap { position:relative; z-index:1; max-width:860px; margin:0 auto; padding:8rem 3rem 5rem; }
+  .back-link { display:inline-flex; align-items:center; gap:0.5rem; font-size:0.78rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); text-decoration:none; margin-bottom:3rem; transition:color 0.2s; }
+  .back-link:hover { color:var(--accent); }
+  .project-eyebrow { font-size:0.72rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); margin-bottom:0.8rem; display:flex; align-items:center; gap:0.8rem; }
+  .project-eyebrow::before { content:''; display:block; width:1.5rem; height:1px; background:var(--accent); }
+  h1 { font-family:'Playfair Display',serif; font-size:clamp(2.2rem,5vw,3.6rem); line-height:1.1; font-weight:700; margin-bottom:0.5rem; }
+  h1 em { font-style:italic; color:var(--accent); }
+  .subtitle { font-size:0.9rem; color:var(--muted); margin-bottom:3.5rem; }
+  .section { margin-bottom:4rem; padding-top:1rem; border-top:1px solid var(--border); }
+  .section-num { font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:1.2rem; }
+  h2 { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:700; margin-bottom:1rem; }
+  h2 em { font-style:italic; color:var(--accent); }
+  p { color:#a09c93; margin-bottom:1rem; font-size:0.95rem; }
+  strong { color:var(--text); font-weight:500; }
+
+  .demo-box { background:var(--surface); border:1px solid var(--border); padding:1.5rem; margin:1.5rem 0; }
+  .demo-box h3 { font-family:'Playfair Display',serif; font-size:1rem; margin-bottom:1rem; color:var(--text); }
+
+  /* Interactive EV calculator */
+  .ev-calc { display:grid; gap:1rem; margin-top:1rem; }
+  .ev-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.8rem; align-items:center; }
+  .ev-row label { font-size:0.82rem; color:var(--muted); }
+  .ev-row input { background:var(--bg); border:1px solid var(--border); color:var(--text); padding:0.4rem 0.8rem; font-family:'DM Sans',sans-serif; font-size:0.88rem; width:100%; }
+  .ev-row input:focus { outline:none; border-color:var(--accent); }
+  .ev-result { background:var(--bg); border:1px solid var(--border); border-left:3px solid var(--accent); padding:1rem 1.2rem; margin-top:1rem; }
+  .ev-result .ev-label { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:0.5rem; }
+  .ev-result .ev-val { font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--accent2); }
+
+  /* Decision tree SVG area */
+  .tree-wrap { overflow-x:auto; margin:1rem 0; }
+
+  /* Limits / features */
+  .concept-grid { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border); margin:1.5rem 0; }
+  .concept-card { background:var(--bg); padding:1.2rem; }
+  .concept-card .ctag { font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:0.5rem; }
+  .concept-card.pro .ctag { color:var(--accent2); }
+  .concept-card.con .ctag { color:#c87070; }
+  .concept-card p { font-size:0.85rem; margin:0; }
+
+  .learn-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1px; background:var(--border); margin-top:1.5rem; }
+  .learn-card { background:var(--bg); padding:1.5rem; }
+  .learn-card .learn-label { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent); margin-bottom:0.6rem; }
+  .learn-card p { font-size:0.88rem; }
+
+  footer { position:relative; z-index:1; border-top:1px solid var(--border); padding:2rem 3rem; display:flex; align-items:center; justify-content:space-between; }
+  footer p { font-size:0.78rem; color:var(--muted); margin:0; }
+  footer a { color:var(--accent); text-decoration:none; font-size:0.78rem; }
+  @media (max-width:640px) { nav{padding:1rem 1.2rem;} .page-wrap{padding:7rem 1.2rem 3rem;} footer{flex-direction:column;gap:1rem;padding:1.5rem 1.2rem;} .ev-row{grid-template-columns:1fr 1fr;} .concept-grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html">← Portfolio</a>
+  <span class="project-id">Project 03 — Decision Analysis</span>
+</nav>
+
+<div class="page-wrap">
+  <a class="back-link" href="index.html">← Back to Portfolio</a>
+
+  <div class="project-eyebrow">Project 03 / Decision Analysis</div>
+  <h1>Decision <em>Trees</em></h1>
+  <p class="subtitle">Structuring uncertain business decisions through expected value analysis and probability-weighted payoffs</p>
+
+  <div class="section">
+    <div class="section-num">01 — Overview</div>
+    <h2>Making Decisions Under <em>Uncertainty</em></h2>
+    <p>
+      Decision trees are a structured framework for evaluating choices when outcomes are uncertain. 
+      By mapping out decision nodes (choices), chance nodes (probabilities), and payoffs, managers 
+      can calculate the <strong>Expected Value (EV)</strong> of each path and select the highest-value option.
+    </p>
+    <p>
+      In the real world, decision trees appear in <strong>product launch decisions</strong> (launch or not?), 
+      <strong>marketing strategy</strong> (predict whether a customer will buy), investment analysis, and clinical 
+      trials. They force explicit thinking about probabilities and consequences — making assumptions visible.
+    </p>
+  </div>
+
+  <div class="section">
+    <div class="section-num">02 — Demonstration</div>
+    <h2>Interactive <em>EV Calculator</em></h2>
+    <p>Enter payoffs and probabilities for a two-outcome decision. The calculator computes expected value in real time.</p>
+
+    <div class="demo-box">
+      <h3>Expected Value Calculator</h3>
+      <div class="ev-calc">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;margin-bottom:0.5rem;">
+          <span style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)">Outcome</span>
+          <span style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)">Payoff (€)</span>
+          <span style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)">Probability</span>
+        </div>
+        <div class="ev-row">
+          <input type="text" value="Success" id="o1name" placeholder="Outcome name">
+          <input type="number" id="p1" value="120000" step="1000">
+          <input type="number" id="prob1" value="0.6" min="0" max="1" step="0.05">
+        </div>
+        <div class="ev-row">
+          <input type="text" value="Failure" id="o2name" placeholder="Outcome name">
+          <input type="number" id="p2" value="-30000" step="1000">
+          <input type="number" id="prob2" value="0.4" min="0" max="1" step="0.05">
+        </div>
+      </div>
+      <div class="ev-result">
+        <div class="ev-label">Expected Value</div>
+        <div class="ev-val" id="evResult">—</div>
+        <div id="evBreakdown" style="font-size:0.8rem;color:var(--muted);margin-top:0.4rem;"></div>
+      </div>
+
+      <div class="tree-wrap" style="margin-top:1.5rem;">
+        <svg id="treeSvg" width="500" height="200" viewBox="0 0 500 200" style="max-width:100%;display:block;"></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-num">03 — Evidence from My Work</div>
+    <h2>Applications & <em>Limitations</em></h2>
+    <p>From my class notes on decision trees:</p>
+
+    <p><strong>Real-world applications I identified:</strong></p>
+    <div class="concept-grid">
+      <div class="concept-card pro"><div class="ctag">✓ Application</div><p>Business launch decisions — structure the choice of whether to bring a new product to market based on market research probabilities.</p></div>
+      <div class="concept-card pro"><div class="ctag">✓ Application</div><p>Marketing & consumer behaviour — predict whether a customer will purchase, using historical probability data to weight expected revenue.</p></div>
+    </div>
+
+    <p><strong>Limitations I noted:</strong></p>
+    <div class="concept-grid">
+      <div class="concept-card con"><div class="ctag">⚠ Limitation</div><p>Oversimplification of reality — real decisions involve more branches and dependencies than a single tree can cleanly represent.</p></div>
+      <div class="concept-card con"><div class="ctag">⚠ Limitation</div><p>Heavy dependence on assumptions — the accuracy of any decision tree output is only as good as the probability estimates used.</p></div>
+      <div class="concept-card con"><div class="ctag">⚠ Limitation</div><p>Omitted factors — intangibles like employee morale, brand reputation, and strategic fit are difficult to assign monetary values.</p></div>
+      <div class="concept-card con"><div class="ctag">⚠ Limitation</div><p>Probability accuracy — how do we know our estimated probabilities are correct? Garbage-in, garbage-out applies here.</p></div>
+    </div>
+
+    <p><strong>My open questions from class:</strong></p>
+    <ul style="list-style:none; display:grid; gap:0.6rem; margin:1rem 0;">
+      <li style="background:var(--surface); border:1px solid var(--border); padding:0.8rem 1.2rem; font-size:0.88rem; color:#a09c93;">
+        <span style="color:var(--accent); margin-right:0.5rem;">?</span>
+        How do we know the probabilities are accurate — and how sensitive is the decision to small changes in those estimates?
+      </li>
+      <li style="background:var(--surface); border:1px solid var(--border); padding:0.8rem 1.2rem; font-size:0.88rem; color:#a09c93;">
+        <span style="color:var(--accent); margin-right:0.5rem;">?</span>
+        When should I use a decision tree instead of other methods — like simulation, scoring models, or intuitive judgement?
+      </li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-num">04 — What Did I Learn?</div>
+    <h2>Knowledge, Skills & <em>Reflection</em></h2>
+    <div class="learn-grid">
+      <div class="learn-card">
+        <div class="learn-label">Knowledge</div>
+        <p>Decision trees decompose complex choices into explicit branches. Each chance node multiplies a payoff by its probability; rolling back from right to left yields the best expected value at each decision point.</p>
+      </div>
+      <div class="learn-card">
+        <div class="learn-label">Skills</div>
+        <p>I practised mapping decisions onto tree structures, computing expected values, and identifying which branches to prune. I also learned to question probability assumptions before trusting an output.</p>
+      </div>
+      <div class="learn-card">
+        <div class="learn-label">Reflection</div>
+        <p>The biggest insight: the method doesn't remove uncertainty — it makes uncertainty explicit and manageable. Its value lies in forcing structured thinking, even when the probabilities themselves are uncertain.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>Luise von Blumenthal · Management Science Portfolio</p>
+  <a href="project4.html">Next: Picking Heuristics →</a>
+</footer>
+
+<script>
+function calcEV() {
+  const pay1 = +document.getElementById('p1').value;
+  const pay2 = +document.getElementById('p2').value;
+  const pr1 = +document.getElementById('prob1').value;
+  const pr2 = +document.getElementById('prob2').value;
+  const ev = pay1*pr1 + pay2*pr2;
+  const fmt = v => (v>=0?'+':'')+v.toLocaleString('en-GB')+'€';
+  document.getElementById('evResult').textContent = fmt(Math.round(ev));
+  document.getElementById('evResult').style.color = ev>=0 ? 'var(--accent2)' : '#c87070';
+  document.getElementById('evBreakdown').textContent =
+    `(${pay1.toLocaleString()}€ × ${pr1}) + (${pay2.toLocaleString()}€ × ${pr2})`;
+  drawTree(pay1, pay2, pr1, pr2, ev);
+}
+
+function drawTree(pay1, pay2, pr1, pr2, ev) {
+  const svg = document.getElementById('treeSvg');
+  const fmt = v => (v>=0?'+':'')+Math.round(v/1000)+'k€';
+  const o1 = document.getElementById('o1name').value || 'Outcome 1';
+  const o2 = document.getElementById('o2name').value || 'Outcome 2';
+  svg.innerHTML = `
+    <!-- Lines -->
+    <line x1="80" y1="100" x2="240" y2="60" stroke="#2e2c28" stroke-width="2"/>
+    <line x1="80" y1="100" x2="240" y2="140" stroke="#2e2c28" stroke-width="2"/>
+    <line x1="240" y1="60" x2="420" y2="40" stroke="#7eb8a0" stroke-width="1.5"/>
+    <line x1="240" y1="60" x2="420" y2="80" stroke="#7eb8a0" stroke-width="1.5"/>
+    <line x1="240" y1="140" x2="420" y2="120" stroke="#7a776f" stroke-width="1.5"/>
+    <line x1="240" y1="140" x2="420" y2="160" stroke="#7a776f" stroke-width="1.5"/>
+
+    <!-- Decision node -->
+    <rect x="50" y="84" width="30" height="30" fill="#c8a96e" rx="2"/>
+    <text x="65" y="104" text-anchor="middle" fill="#0f0e0c" font-size="10" font-family="DM Sans">Dec</text>
+
+    <!-- Chance node -->
+    <circle cx="240" cy="60" r="14" fill="none" stroke="#7eb8a0" stroke-width="2"/>
+    <text x="240" y="65" text-anchor="middle" fill="#7eb8a0" font-size="10">EV</text>
+    <circle cx="240" cy="140" r="14" fill="none" stroke="#7a776f" stroke-width="2"/>
+    <text x="240" y="145" text-anchor="middle" fill="#7a776f" font-size="9">Alt.</text>
+
+    <!-- EV labels -->
+    <text x="240" y="38" text-anchor="middle" fill="#7eb8a0" font-size="9" font-family="DM Sans">${fmt(ev)}</text>
+
+    <!-- Probability labels -->
+    <text x="155" y="55" fill="#c8a96e" font-size="9" font-family="DM Sans">p=${pr1}</text>
+    <text x="155" y="135" fill="#7a776f" font-size="9" font-family="DM Sans">p=${pr2}</text>
+
+    <!-- Outcome labels -->
+    <text x="425" y="44" fill="#7eb8a0" font-size="10" font-family="DM Sans">${o1}</text>
+    <text x="425" y="59" fill="#c8a96e" font-size="10" font-family="DM Sans">${fmt(pay1)}</text>
+    <text x="425" y="84" fill="#7a776f" font-size="10" font-family="DM Sans">p=${pr1}</text>
+
+    <text x="425" y="124" fill="#a09c93" font-size="10" font-family="DM Sans">${o2}</text>
+    <text x="425" y="139" fill="#c87070" font-size="10" font-family="DM Sans">${fmt(pay2)}</text>
+    <text x="425" y="164" fill="#7a776f" font-size="10" font-family="DM Sans">p=${pr2}</text>
+
+    <text x="15" y="85" fill="#muted" font-size="8" font-family="DM Sans" fill="#7a776f">Decision</text>
+    <text x="15" y="97" fill="#7a776f" font-size="8" font-family="DM Sans">Node</text>
+  `;
+}
+
+['p1','p2','prob1','prob2','o1name','o2name'].forEach(id =>
+  document.getElementById(id).addEventListener('input', calcEV)
+);
+calcEV();
+</script>
+</body>
+</html>
